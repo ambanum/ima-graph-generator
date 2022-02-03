@@ -1,9 +1,9 @@
 import './common/bootstrap';
 
-import * as ProcessorManager from 'managers/ProcessorManager';
+import ProcessorManager from 'managers/ProcessorManager';
 import * as logging from 'common/logging';
 
-import { getProvider, getVersion } from 'graphGenerator';
+import graphgenerator from 'graphgenerator';
 
 import Scraper from 'common/node-snscrape';
 import SearchPoller from './searches';
@@ -26,7 +26,7 @@ const PROCESSOR = `${PROCESSOR_NAME}_${PROCESSOR_ID}_${service}`;
 
 const processorMetadata = {
   version,
-  graphGenerator: `${getProvider()}:${getVersion()}`,
+  graphgenerator: `${graphgenerator.getProvider()}:${graphgenerator.getVersion()}`,
   snscrape: Scraper.getVersion(),
   scraperPath: Scraper.getPath(),
   MONGODB_URI: process.env.MONGODB_URI,
@@ -39,7 +39,11 @@ const processorMetadata = {
 
   await dbConnect();
 
-  await ProcessorManager.update(PROCESSOR, { metadata: processorMetadata });
+  const processorManager = new ProcessorManager({
+    logger: logging,
+    processorId: PROCESSOR,
+  });
+  await processorManager.update({ metadata: processorMetadata });
 
   if (service === 'server') {
     if (process.env.API !== 'false') {

@@ -7,11 +7,33 @@ export interface GraphGeneratorResponse {
 export type GraphGeneratorsResponse = GraphGeneratorResponse[];
 
 export interface GetGraphGeneratorOptions {
-  rawJson?: string;
+  json_path: string;
+  img_path?: string;
+  minretweets?: number;
+  input_graph_json_path?: string;
+  snscrape_json_path?: string;
+  since?: string;
+  maxresults?: number;
+  layout_algo?: 'circular' | 'kamada_kawai' | 'spring' | 'random' | 'spiral';
+  community_algo?:
+    | 'greedy_modularity'
+    | 'asyn_lpa_communities'
+    | 'girvan_newman'
+    | 'label_propagation'
+    | 'louvain';
+}
+export interface GetGraphJson {
+  nodes: any[];
+  edges: any[];
+  metadata: any;
 }
 
 export interface Adapter {
-  getGraph: (search: string, options?: GetGraphGeneratorOptions) => Promise<GraphGeneratorResponse>;
+  getGraph: (search: string, options?: GetGraphGeneratorOptions) => Promise<void>;
+  getGraphJson: (
+    search: string,
+    options?: Omit<GetGraphGeneratorOptions, 'json_path' | 'img_path'>
+  ) => Promise<GetGraphJson>;
   getVersion: () => string;
 }
 
@@ -30,12 +52,7 @@ if (!adapters.includes(GRAPH_GENERATOR_PROVIDER)) {
 const adapter: Adapter =
   GRAPH_GENERATOR_PROVIDER === 'social-networks-graph-generator' ? graphGenerator : ({} as Adapter);
 
-export const getGraph = async (search: string, options: GetGraphGeneratorOptions = {}) => {
-  return adapter.getGraph(search, options);
+export default {
+  ...adapter,
+  getProvider: () => GRAPH_GENERATOR_PROVIDER,
 };
-
-export const getVersion = () => {
-  return adapter.getVersion();
-};
-
-export const getProvider = () => GRAPH_GENERATOR_PROVIDER;

@@ -1,7 +1,6 @@
 import GraphSearchManager from 'managers/GraphSearchManager';
 import * as logging from 'common/logging';
 
-import { getGraph } from 'graphgenerator';
 import express, { Express } from 'express';
 
 interface ServerProps {

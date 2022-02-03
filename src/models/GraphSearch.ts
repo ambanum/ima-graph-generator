@@ -19,7 +19,15 @@ export interface GraphSearch extends Document {
   name: string;
   status: GraphSearchStatuses;
   type: GraphSearchTypes;
-  metadata?: any;
+  result: {
+    nodes: any[];
+    edges: any[];
+    metadata: any;
+  };
+  metadata?: {
+    [key: string]: any;
+    url: any;
+  };
   error?: string;
 }
 
@@ -29,6 +37,7 @@ const schema = new Schema<GraphSearch>(
     status: { type: String, required: true, index: true, enum: Object.values(GraphSearchStatuses) },
     type: { type: String, required: true, index: true, enum: Object.values(GraphSearchTypes) },
     metadata: { type: Schema.Types.Mixed },
+    result: { type: Schema.Types.Mixed },
     error: { type: String, index: 'text' },
     processorId: {
       type: String,

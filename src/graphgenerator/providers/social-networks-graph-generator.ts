@@ -1,70 +1,100 @@
-import { Adapter } from '../index';
+import { Adapter, GetGraphJson } from '../index';
 import { execCmd } from 'common/cmd-utils';
 import fs from 'fs';
-import temp from 'temp';
+import os from 'os';
+import path from 'path';
 
-const BOT_SCORE_SOCIAL_NETWORKS_PATH = process.env.BOT_SCORE_SOCIAL_NETWORKS_PATH || 'botfinder';
+const GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH =
+  process.env.GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH || 'graphgenerator';
 
-export interface GraphGenerator {
-  botScore: number;
-  details: {
-    base_value: number;
-    statuses_count: number;
-    followers_count: number;
-    favourites_count: number;
-    friends_count: number;
-    listed_count: number;
-    default_profile: number;
-    profile_use_background_image: number;
-    verified: number;
-    age: number;
-    tweet_frequence: number;
-    followers_growth_rate: number;
-    favourites_growth_rate: number;
-    listed_growth_rate: number;
-    friends_followers_ratio: number;
-    followers_friend_ratio: number;
-    name_length: number;
-    screenname_length: number;
-    name_digits: number;
-    screen_name_digits: number;
-    description_length: number;
-  };
-}
+const dir = path.join(os.tmpdir(), 'social-networks-graph-generator');
+fs.mkdirSync(dir, { recursive: true });
+
+export interface GraphGenerator {}
 
 const getGraph: Adapter['getGraph'] = async (search: string, options) => {
-  let cmd: string;
+  const cmds: string[] = [];
 
-  let jsonPath;
-  let imagePath;
-  console.log(''); //eslint-disable-line
-  console.log('╔════START══search══════════════════════════════════════════════════'); //eslint-disable-line
-  console.log(search); //eslint-disable-line
-  console.log('╚════END════search══════════════════════════════════════════════════'); //eslint-disable-line
+  if (options.minretweets) {
+    cmds.push(`-r ${options.minretweets}`);
+  }
+  if (options.input_graph_json_path) {
+    cmds.push(`-f ${options.input_graph_json_path}`);
+  }
+  if (options.snscrape_json_path) {
+    cmds.push(`-s ${options.snscrape_json_path}`);
+  }
+  if (options.since) {
+    cmds.push(`-d ${options.since}`);
+  }
+  if (options.maxresults) {
+    cmds.push(`-m ${options.maxresults}`);
+  }
+  if (options.layout_algo) {
+    cmds.push(`-a ${options.layout_algo}`);
+  }
+  if (options.community_algo) {
+    cmds.push(`-c ${options.community_algo}`);
+  }
+  if (options.json_path) {
+    cmds.push(`-j ${options.json_path}`);
+  }
+  if (options.img_path) {
+    cmds.push(`-i ${options.img_path}`);
+  }
 
-  // if (options.rawJson) {
-  //   cmd = `${BOT_SCORE_SOCIAL_NETWORKS_PATH} --rawjson '${options.rawJson.replace(/'/gi, ' ')}'`;
-  // } else {
-  //   cmd = `${BOT_SCORE_SOCIAL_NETWORKS_PATH} --username  ${username}`;
-  // }
-  // const result = execCmd(cmd);
+  const cmd = `${GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH} ${cmds.join(' ')} "+${search
+    .replace('$', '\\$')
+    .replace(/"/gim, '\\"')}"`;
+  console.log('--------------');
+  console.log(cmd);
+  console.log('--------------');
 
-  // const { botScore, details }: GraphGenerator = JSON.parse(result);
+  execCmd(cmd);
+};
 
-  return {
-    jsonPath,
-    imagePath,
-  };
+const getGraphJson: Adapter['getGraphJson'] = async (search: string, options) => {
+  const jsonPath = path.join(
+    dir,
+    `${search.replace(/[/\\?&%*:$|"<>]/g, '-')}.json` // replace invalid characters for a folder
+  );
+
+  try {
+    await getGraph(search, { ...options, json_path: jsonPath });
+    const json: GetGraphJson = JSON.parse(fs.readFileSync(jsonPath).toString());
+    fs.unlinkSync(jsonPath);
+    return json;
+  } catch (e) {
+    console.log(''); //eslint-disable-line
+    console.log('╔════START══e══════════════════════════════════════════════════'); //eslint-disable-line
+    console.log(e); //eslint-disable-line
+    console.log('╚════END════e══════════════════════════════════════════════════'); //eslint-disable-line
+
+    process.exit();
+    if (fs.existsSync(jsonPath)) {
+      fs.unlinkSync(jsonPath);
+    }
+
+    if (e.toString().includes('enough tweets found to build graph')) {
+      // TODO Remove when cli tool handles this nicely
+      return {
+        nodes: [],
+        edges: [],
+        metadata: {},
+      };
+    }
+
+    throw e;
+  }
 };
 
 const getVersion: Adapter['getVersion'] = () => {
-  const cmd = `${BOT_SCORE_SOCIAL_NETWORKS_PATH} --version`;
+  const cmd = `${GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH} --version`;
   return execCmd(cmd);
 };
 
-const adapter: Adapter = {
+export default {
   getGraph,
+  getGraphJson,
   getVersion,
-};
-
-export default adapter;
+} as Adapter;
