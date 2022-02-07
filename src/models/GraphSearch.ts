@@ -1,3 +1,4 @@
+import { GetGraphGeneratorOptions } from 'graphgenerator';
 import { Document, Model, Schema, model, models } from 'mongoose';
 
 export enum GraphSearchStatuses {
@@ -29,6 +30,7 @@ export interface GraphSearch extends Document {
     url: any;
   };
   error?: string;
+  options: GetGraphGeneratorOptions;
 }
 
 const schema = new Schema<GraphSearch>(
@@ -37,6 +39,7 @@ const schema = new Schema<GraphSearch>(
     status: { type: String, required: true, index: true, enum: Object.values(GraphSearchStatuses) },
     type: { type: String, required: true, index: true, enum: Object.values(GraphSearchTypes) },
     metadata: { type: Schema.Types.Mixed },
+    options: { type: Schema.Types.Mixed },
     result: { type: Schema.Types.Mixed },
     error: { type: String, index: 'text' },
     processorId: {

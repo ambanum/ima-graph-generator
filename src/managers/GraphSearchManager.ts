@@ -50,7 +50,7 @@ export default class GraphSearchManager {
     return { type, name: sanitizedName };
   }
 
-  async create({ name, type, metadata }: Partial<GraphSearch>) {
+  async create({ name, type, metadata, options }: Partial<GraphSearch>) {
     this.logger.info(`Creating new search ${name}`);
 
     return await GraphSearchModel.create({
@@ -59,6 +59,7 @@ export default class GraphSearchManager {
       status: GraphSearchStatuses.PENDING,
       type,
       metadata,
+      options,
     });
   }
 

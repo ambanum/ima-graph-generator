@@ -76,10 +76,7 @@ export default class SearchPoller {
       }
       await this.processorManager.update({ lastProcessedAt: new Date() });
 
-      const json = await graphgenerator.getGraphJson(item.name, {
-        maxresults: 2000,
-        compute_botscore: true,
-      });
+      const json = await graphgenerator.getGraphJson(item.name, item.options);
 
       this.logger.info(
         `Found ${json.nodes.length} nodes and ${json.edges.length} tweets for ${item.name}`

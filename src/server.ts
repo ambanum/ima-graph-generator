@@ -9,6 +9,11 @@ interface ServerProps {
 }
 
 const SERVER_PORT = process.env.SERVER_PORT || 4000;
+
+const defaultOptions = {
+  maxresults: 2000,
+  compute_botscore: true,
+};
 export default class Server {
   private processorId: ServerProps['processorId'];
   private logger?: ServerProps['logger'];
@@ -28,6 +33,9 @@ export default class Server {
   init = () => {
     this.app.post('/graph-search/:search', async (req, res) => {
       const { search } = req.params;
+      const { options = {} } = req.body || {};
+
+      const allOptions = { ...defaultOptions, ...options };
       try {
         const invalidMimes = ['image', 'video', 'application'];
 
@@ -39,7 +47,11 @@ export default class Server {
           return res.json({ search: existingSearch });
         }
 
-        const newSearch = await this.graphManager.create({ name, type });
+        const newSearch = await this.graphManager.create({
+          name,
+          type,
+          options: allOptions,
+        });
 
         return res.json({ status: 'ok', search: newSearch });
       } catch (error) {
