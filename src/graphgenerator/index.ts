@@ -12,6 +12,7 @@ export interface GetGraphGeneratorOptions {
   minretweets?: number;
   input_graph_json_path?: string;
   snscrape_json_path?: string;
+  compute_botscore?: boolean;
   since?: string;
   maxresults?: number;
   layout_algo?: 'circular' | 'kamada_kawai' | 'spring' | 'random' | 'spiral';

@@ -27,8 +27,8 @@ export default class Server {
 
   init = () => {
     this.app.post('/graph-search/:search', async (req, res) => {
+      const { search } = req.params;
       try {
-        const { search } = req.params;
         const invalidMimes = ['image', 'video', 'application'];
 
         const { name, type } = await GraphSearchManager.formatTypeAndName(search, invalidMimes);
@@ -41,17 +41,35 @@ export default class Server {
 
         const newSearch = await this.graphManager.create({ name, type });
 
-        return res.json({ search: newSearch });
+        return res.json({ status: 'ok', search: newSearch });
       } catch (error) {
-        res.json({ status: 'ko', message: 'Graph not found', error: error.toString() });
+        res.json({
+          status: 'ko',
+          message: `Graph not created for ${search}`,
+          error: error.toString(),
+        });
       }
     });
 
-    this.app.get('/graph-search', async (req, res) => {
+    this.app.get('/graph-search/:search', async (req, res) => {
+      const { search: searchQuery } = req.params;
+      try {
+        const search = await this.graphManager.get({ name: searchQuery });
+
+        return res.json({ status: 'ok', search });
+      } catch (error) {
+        res.json({
+          status: 'ko',
+          message: `Graph not found for ${searchQuery}`,
+          error: error.toString(),
+        });
+      }
+    });
+    this.app.get('/graph-searches', async (req, res) => {
       try {
         const searches = await this.graphManager.list();
 
-        return res.json({ searches });
+        return res.json({ status: 'ok', searches });
       } catch (error) {
         res.json({ status: 'ko', message: 'Graphs not found', error: error.toString() });
       }

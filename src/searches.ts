@@ -43,7 +43,6 @@ export default class SearchPoller {
   async pollSearches() {
     let count: number;
     let item: GraphSearch;
-    console.log('poll');
 
     try {
       ({ item, count } = await this.graphSearchmanager.getPendingSearches());
@@ -77,7 +76,10 @@ export default class SearchPoller {
       }
       await this.processorManager.update({ lastProcessedAt: new Date() });
 
-      const json = await graphgenerator.getGraphJson(item.name);
+      const json = await graphgenerator.getGraphJson(item.name, {
+        maxresults: 2000,
+        compute_botscore: true,
+      });
 
       this.logger.info(
         `Found ${json.nodes.length} nodes and ${json.edges.length} tweets for ${item.name}`

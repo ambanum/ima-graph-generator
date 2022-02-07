@@ -27,6 +27,9 @@ const getGraph: Adapter['getGraph'] = async (search: string, options) => {
   if (options.since) {
     cmds.push(`-d ${options.since}`);
   }
+  if (options.compute_botscore) {
+    cmds.push(`--compute_botscore`);
+  }
   if (options.maxresults) {
     cmds.push(`-m ${options.maxresults}`);
   }
@@ -48,9 +51,9 @@ const getGraph: Adapter['getGraph'] = async (search: string, options) => {
     .replace(/"/gim, '\\"')}"`;
   console.log('--------------');
   console.log(cmd);
-  console.log('--------------');
 
   execCmd(cmd);
+  console.log('--------------');
 };
 
 const getGraphJson: Adapter['getGraphJson'] = async (search: string, options) => {
@@ -70,7 +73,6 @@ const getGraphJson: Adapter['getGraphJson'] = async (search: string, options) =>
     console.log(e); //eslint-disable-line
     console.log('╚════END════e══════════════════════════════════════════════════'); //eslint-disable-line
 
-    process.exit();
     if (fs.existsSync(jsonPath)) {
       fs.unlinkSync(jsonPath);
     }
