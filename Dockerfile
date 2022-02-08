@@ -46,7 +46,7 @@ RUN yarn build
 RUN chmod 777 /home/ambnum/build && \
     chown ambnum:ambnum /home/ambnum/build
 
-RUN pip install social-networks-graph-generator==1.0.3
+RUN pip install social-networks-graph-generator==1.1.0
 # this next line is here to break the build in case install does not work
 RUN graphgenerator -v
 
