@@ -1,8 +1,6 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
-EXPOSE 4000
-
-ARG ENV_FILE=".env.production"
+EXPOSE 4001
 
 # Create folder and user
 RUN adduser ambnum && \
@@ -11,8 +9,8 @@ RUN adduser ambnum && \
 
 # update package repositories
 RUN apt-get update -y
-RUN apt-get install -y python3-pip python3-numpy
-RUN pip install --upgrade pip setuptools wheel numpy
+RUN apt-get install -y python3-pip
+RUN pip install --upgrade pip setuptools wheel
 
 # install common useful libs for debugging
 RUN apt-get install -y nano git
@@ -46,7 +44,7 @@ RUN yarn build
 RUN chmod 777 /home/ambnum/build && \
     chown ambnum:ambnum /home/ambnum/build
 
-RUN pip install social-networks-graph-generator==1.1.0
+RUN pip install git+https://github.com/ambanum/social-networks-graph-generator.git
 # this next line is here to break the build in case install does not work
 RUN graphgenerator -v
 
