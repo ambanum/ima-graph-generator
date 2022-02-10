@@ -2,17 +2,12 @@ import ProcessorManager from 'managers/ProcessorManager';
 import GraphSearchManager from 'managers/GraphSearchManager';
 import * as logging from 'common/logging';
 import graphgenerator from 'graphgenerator';
-import { GraphSearchStatuses, GraphSearch, GraphSearchTypes } from 'interfaces';
+import { GraphSearch, GraphSearchTypes } from 'interfaces';
 
-import Scraper from 'common/node-snscrape';
 import { getUrlData } from 'url-scraper';
 
 const WAIT_TIME = 1 * 1000; // 1s
 const WAIT_TIME_ON_DB_ERROR = 30 * 1000; // 30s
-const NB_TWEETS_TO_SCRAPE = process.env?.NB_TWEETS_TO_SCRAPE;
-const NB_TWEETS_TO_SCRAPE_FIRST_TIME = process.env?.NB_TWEETS_TO_SCRAPE_FIRST_TIME;
-const MIN_PRIORITY = parseInt(process.env?.MIN_PRIORITY || '0', 10);
-const NEXT_PROCESS_IN_FUTURE = 60 * 60 * 1000;
 
 // Because I could not find other way in tyepscript to get functions of a class
 type Properties<T> = { [K in keyof T]: T[K] };

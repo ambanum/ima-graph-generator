@@ -5,7 +5,6 @@ import * as logging from 'common/logging';
 
 import graphgenerator from 'graphgenerator';
 
-import Scraper from 'common/node-snscrape';
 import SearchPoller from './searches';
 import Server from './server';
 import dbConnect from 'common/db';
@@ -27,8 +26,6 @@ const PROCESSOR = `${PROCESSOR_NAME}_${PROCESSOR_ID}_${service}`;
 const processorMetadata = {
   version,
   graphgenerator: `${graphgenerator.getProvider()}:${graphgenerator.getVersion()}`,
-  snscrape: Scraper.getVersion(),
-  scraperPath: Scraper.getPath(),
   MONGODB_URI: process.env.MONGODB_URI,
   DEBUG: process.env.DEBUG,
 };
