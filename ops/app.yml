@@ -1,0 +1,6 @@
+---
+- name: Setup ima-graph-generator
+  hosts: all
+
+  roles:
+    - ima-graph-generator/github-clone

@@ -1,0 +1,16 @@
+all:
+  vars:
+    ansible_user: debian
+    branch: main
+    repository: 'https://github.com/ambanum/ima-graph-generator.git'
+  children:
+    production:
+      children:
+        preproduction:
+          hosts:
+            51.89.231.68:
+              directory: 'ima-graph-generator-preproduction'
+              branch: 'develop'
+              port: '7832'
+              env_directory: '.env.preproduction'
+              nb_processors: '1'
