@@ -45,6 +45,9 @@ const getGraph: Adapter['getGraph'] = async (search: string, options) => {
   if (options.img_path) {
     cmds.push(`-i ${options.img_path}`);
   }
+  if (options.batch_size) {
+    cmds.push(`-bs ${options.batch_size}`);
+  }
 
   const cmd = `${GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH} ${cmds.join(' ')} "+${search
     .replace('$', '\\$')

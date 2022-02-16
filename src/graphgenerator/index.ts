@@ -22,6 +22,7 @@ export interface GetGraphGeneratorOptions {
     | 'girvan_newman'
     | 'label_propagation'
     | 'louvain';
+  batch_size?: number;
 }
 export interface GetGraphJson {
   nodes: any[];
