@@ -12,7 +12,7 @@ fs.mkdirSync(dir, { recursive: true });
 
 export interface GraphGenerator {}
 
-const getGraph: Adapter['getGraph'] = async (search: string, options) => {
+const computeGraph: Adapter['computeGraph'] = async (search: string, options) => {
   const cmds: string[] = [];
 
   if (options.minretweets) {
@@ -52,43 +52,43 @@ const getGraph: Adapter['getGraph'] = async (search: string, options) => {
   const cmd = `${GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH} ${cmds.join(' ')} "+${search
     .replace('$', '\\$')
     .replace(/"/gim, '\\"')}"`;
-  console.log('--------------');
-  console.log(cmd);
-
+  console.info(cmd);
   execCmd(cmd);
-  console.log('--------------');
 };
 
-const getGraphJson: Adapter['getGraphJson'] = async (search: string, options) => {
+const watchGraphJson: Adapter['watchGraphJson'] = (search: string, options) => {
   const jsonPath = path.join(
     dir,
     `${search.replace(/[/\\?&%*:$|"<>]/g, '-')}.json` // replace invalid characters for a folder
   );
 
-  try {
-    await getGraph(search, { ...options, json_path: jsonPath });
-    const json: GetGraphJson = JSON.parse(fs.readFileSync(jsonPath).toString());
-    fs.unlinkSync(jsonPath);
-    return json;
-  } catch (e) {
-    console.log(''); //eslint-disable-line
-    console.log('╔════START══e══════════════════════════════════════════════════'); //eslint-disable-line
-    console.log(e); //eslint-disable-line
-    console.log('╚════END════e══════════════════════════════════════════════════'); //eslint-disable-line
-
+  const unlinkFile = () => {
     if (fs.existsSync(jsonPath)) {
       fs.unlinkSync(jsonPath);
     }
+  };
 
-    if (e.toString().includes('enough tweets found to build graph')) {
-      // TODO Remove when cli tool handles this nicely
-      return {
-        nodes: [],
-        edges: [],
-        metadata: {},
-      };
-    }
+  try {
+    computeGraph(search, { ...options, json_path: jsonPath });
 
+    return {
+      readFile: () => {
+        if (fs.existsSync(jsonPath)) {
+          return JSON.parse(fs.readFileSync(jsonPath).toString());
+        }
+        return {
+          nodes: [],
+          edges: [],
+          metadata: {
+            status: 'PROCESSING',
+          },
+        };
+      },
+
+      unlinkFile,
+    };
+  } catch (e) {
+    unlinkFile();
     throw e;
   }
 };
@@ -99,7 +99,7 @@ const getVersion: Adapter['getVersion'] = () => {
 };
 
 export default {
-  getGraph,
-  getGraphJson,
+  computeGraph,
+  watchGraphJson,
   getVersion,
 } as Adapter;

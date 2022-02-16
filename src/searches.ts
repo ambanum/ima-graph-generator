@@ -2,7 +2,7 @@ import ProcessorManager from 'managers/ProcessorManager';
 import GraphSearchManager from 'managers/GraphSearchManager';
 import * as logging from 'common/logging';
 import graphgenerator from 'graphgenerator';
-import { GraphSearch, GraphSearchTypes } from 'interfaces';
+import { GraphSearch, GraphSearchStatuses, GraphSearchTypes } from 'interfaces';
 
 import { getUrlData } from 'url-scraper';
 
@@ -71,14 +71,25 @@ export default class SearchPoller {
       }
       await this.processorManager.update({ lastProcessedAt: new Date() });
 
-      const json = await graphgenerator.getGraphJson(item.name, item.options);
+      const { readFile, unlinkFile } = graphgenerator.watchGraphJson(item.name, item.options);
 
-      this.logger.info(
-        `Found ${json.nodes.length} nodes and ${json.edges.length} tweets for ${item.name}`
-      );
+      const interval = setInterval(async () => {
+        try {
+          const json = readFile();
 
-      await this.graphSearchmanager.stopProcessingSearch(item, { result: json });
-      this.logger.info(`Item ${item._id} processing is done, waiting ${WAIT_TIME / 1000}s`);
+          await this.graphSearchmanager.stopProcessingSearch(item, {
+            result: json,
+            status: GraphSearchStatuses.PROCESSING,
+          });
+          if (json.metadata.status === 'DONE') {
+            await this.graphSearchmanager.stopProcessingSearch(item, { result: json });
+            unlinkFile();
+            clearInterval(interval);
+          }
+        } catch (e) {
+          console.warn(e);
+        }
+      }, 2000);
     } catch (e) {
       this.logger.error(e.toString());
 

@@ -31,11 +31,11 @@ export interface GetGraphJson {
 }
 
 export interface Adapter {
-  getGraph: (search: string, options?: GetGraphGeneratorOptions) => Promise<void>;
-  getGraphJson: (
+  computeGraph: (search: string, options?: GetGraphGeneratorOptions) => Promise<void>;
+  watchGraphJson: (
     search: string,
     options?: Omit<GetGraphGeneratorOptions, 'json_path' | 'img_path'>
-  ) => Promise<GetGraphJson>;
+  ) => { readFile: () => GetGraphJson; unlinkFile: () => void };
   getVersion: () => string;
 }
 
