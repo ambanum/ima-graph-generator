@@ -11,8 +11,9 @@ interface ServerProps {
 const SERVER_PORT = process.env.SERVER_PORT || 4000;
 
 const defaultOptions = {
-  maxresults: 2000,
+  maxresults: 10000,
   compute_botscore: true,
+  batch_size: 200,
 };
 export default class Server {
   private processorId: ServerProps['processorId'];
