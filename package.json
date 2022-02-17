@@ -18,7 +18,7 @@
     "dev:node": "node --trace-warnings --trace-exit --trace-sigint --trace-uncaught --trace-deprecation --trace-atomics-wait -r ts-node/register -r tsconfig-paths/register",
     "dev:search": "yarn dev:node ./src/index.ts search",
     "dev:server": "yarn dev:node ./src/index.ts server",
-    "dev": "concurrently  --kill-others --names \"search,server\" \"yarn dev:search\" \"yarn dev:server\"",
+    "dev": "nodemon --exec concurrently  --kill-others --names \"search,server\" \"yarn dev:search\" \"yarn dev:server\"",
     "deploy:vagrant": "ansible-playbook ops/site.yml -i ops/inventories/dev.yml --limit vagrant -vvv",
     "deploy:tflmi:production": "ansible-playbook ops/site.yml -i ops/inventories/production.yml  --limit tflmi-production -vvv",
     "deploy:ambnum:production": "ansible-playbook ops/site.yml -i ops/inventories/production.yml  --limit ambnum-production -vvv",
@@ -26,7 +26,7 @@
     "deploy:production": "ansible-playbook ops/site.yml -i ops/inventories/production.yml  --limit production -vvv",
     "docker:build": "docker build --progress plain -t $npm_package_name .",
     "docker:run": "(docker rm $npm_package_name || true) && docker run --rm -p 4001:4001 -e PROCESSOR_NAME=docker -e SNSCRAPE_PATH=/home/ambnum/.local/bin/snscrape -e GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH=graphgenerator  --name $npm_package_name -it $npm_package_name",
-    "docker:run-2": "(docker rm ima-graph-generator-2 || true) && docker run --rm -e API=false -e USER_BOT_SCORES=false -e PROCESSOR_ID=2 -e PROCESSOR_NAME=docker -e TWINT_PATH=/home/ambnum/.local/bin/twint -e SNSCRAPE_PATH=/home/ambnum/.local/bin/snscrape -e NB_TWEETS_TO_SCRAPE=6000 --name ima-graph-generator-2 -it $npm_package_name",
+    "docker:run-2": "(docker rm ima-graph-generator-2 || true) && docker run --rm -e API=false -e USER_BOT_SCORES=false -e PROCESSOR_ID=2 -e PROCESSOR_NAME=docker -e GRAPH_GENERATOR_SOCIAL_NETWORKS_PATH=graphgenerator --name ima-graph-generator-2 -it $npm_package_name",
     "docker:ssh": "docker exec -it $npm_package_name /bin/bash",
     "test": "jest"
   },
