@@ -1,40 +1,29 @@
 all:
   vars:
     ansible_user: debian
-    branch: main
     repository: 'https://github.com/ambanum/ima-graph-generator.git'
+    nb_processors: '1'
+    ansible_host: 51.89.231.68
+    branch: 'main'
   children:
     preprod:
-      vars:
-        branch: 'develop'
-        nb_processors: '1'
-      children:
+      hosts:
         preproduction:
-          hosts:
-            51.89.231.68:
-              directory: 'ima-graph-generator-preproduction'
-              port: '7832'
-              env_directory: '.env.preproduction'
+          branch: 'develop'
+          directory: 'ima-graph-generator-preproduction'
+          port: '7832'
+          env_directory: '.env.preproduction'
     prod:
-      vars:
-        branch: 'main'
-        nb_processors: '1'
-      children:
-        ima-production:
-          hosts:
-            51.89.231.68:
-              directory: 'ima-graph-generator-production'
-              port: '7032'
-              env_directory: '.env.production'
+      hosts:
+        production:
+          directory: 'ima-graph-generator-production'
+          port: '7032'
+          env_directory: '.env.production'
         tflmi-production:
-          hosts:
-            51.89.231.68:
-              directory: 'ima-graph-generator-tflmi-production'
-              port: '7034'
-              env_directory: '.env.tflmi.production'
+          directory: 'ima-graph-generator-tflmi-production'
+          port: '7034'
+          env_directory: '.env.tflmi.production'
         ambnum-production:
-          hosts:
-            51.89.231.68:
-              directory: 'ima-graph-generator-ambnum-production'
-              port: '7036'
-              env_directory: '.env.ambnum.production'
+          directory: 'ima-graph-generator-ambnum-production'
+          port: '7036'
+          env_directory: '.env.ambnum.production'
