@@ -4,37 +4,37 @@ all:
     branch: main
     repository: 'https://github.com/ambanum/ima-graph-generator.git'
   children:
-    production:
+    preprod:
+      vars:
+        branch: 'develop'
+        nb_processors: '1'
       children:
         preproduction:
           hosts:
             51.89.231.68:
               directory: 'ima-graph-generator-preproduction'
-              branch: 'develop'
               port: '7832'
               env_directory: '.env.preproduction'
-              nb_processors: '1'
+    prod:
+      vars:
+        branch: 'main'
+        nb_processors: '1'
+      children:
         ima-production:
           hosts:
             51.89.231.68:
               directory: 'ima-graph-generator-production'
-              branch: 'main'
               port: '7032'
               env_directory: '.env.production'
-              nb_processors: '1'
         tflmi-production:
           hosts:
             51.89.231.68:
               directory: 'ima-graph-generator-tflmi-production'
-              branch: 'main'
               port: '7034'
               env_directory: '.env.tflmi.production'
-              nb_processors: '1'
         ambnum-production:
           hosts:
             51.89.231.68:
               directory: 'ima-graph-generator-ambnum-production'
-              branch: 'main'
               port: '7036'
               env_directory: '.env.ambnum.production'
-              nb_processors: '1'
