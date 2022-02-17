@@ -1,10 +1,21 @@
 all:
+  vars:
+    ansible_user: debian
+    branch: develop
+    repository: 'https://github.com/ambanum/ima-graph-generator.git'
   children:
     dev:
-      hosts:
-        '127.0.0.1':
-          ansible_ssh_port: 2222
-          ansible_user: vagrant
-          ansible_ssh_private_key_file: ../disinfo.quaidorsay.fr-ops/.vagrant/machines/disinfo/virtualbox/private_key
-          ansible_ssh_extra_args: -o StrictHostKeyChecking=no -o IdentitiesOnly=yes
-          ansible_python_interpreter: /usr/bin/python3
+      children:
+        vagrant:
+          hosts:
+            127.0.0.1:
+              ansible_ssh_port: 2222
+              ansible_user: vagrant
+              ansible_ssh_private_key_file: ../disinfo.quaidorsay.fr-ops/.vagrant/machines/disinfo/virtualbox/private_key
+              ansible_ssh_extra_args: -o StrictHostKeyChecking=no -o IdentitiesOnly=yes
+              ansible_python_interpreter: /usr/bin/python3
+              directory: 'ima-graph-generator-vagrant'
+              branch: 'develop'
+              port: '7832'
+              env_directory: '.env.vagrant'
+              nb_processors: '1'
