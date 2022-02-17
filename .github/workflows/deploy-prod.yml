@@ -25,3 +25,5 @@ jobs:
       - run: ansible-galaxy collection install community.docker:=1.6.1
       - name: Deploy on production
         run: npm run deploy:production
+      - name: Deploy on TFLMI production
+        run: npm run deploy:tflmi:production

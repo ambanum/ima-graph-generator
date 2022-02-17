@@ -22,3 +22,11 @@ all:
               port: '7032'
               env_directory: '.env.production'
               nb_processors: '1'
+        tflmi-production:
+          hosts:
+            51.89.231.68:
+              directory: 'ima-graph-generator-tflmi-production'
+              branch: 'main'
+              port: '7034'
+              env_directory: '.env.tflmi.production'
+              nb_processors: '1'
