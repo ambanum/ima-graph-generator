@@ -30,3 +30,11 @@ all:
               port: '7034'
               env_directory: '.env.tflmi.production'
               nb_processors: '1'
+        ambnum-production:
+          hosts:
+            51.89.231.68:
+              directory: 'ima-graph-generator-ambnum-production'
+              branch: 'main'
+              port: '7036'
+              env_directory: '.env.ambnum.production'
+              nb_processors: '1'
