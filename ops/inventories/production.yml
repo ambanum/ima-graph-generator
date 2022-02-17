@@ -14,3 +14,11 @@ all:
               port: '7832'
               env_directory: '.env.preproduction'
               nb_processors: '1'
+        production:
+          hosts:
+            51.89.231.68:
+              directory: 'ima-graph-generator-production'
+              branch: 'main'
+              port: '7032'
+              env_directory: '.env.production'
+              nb_processors: '1'
