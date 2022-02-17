@@ -26,8 +26,6 @@
     build:
       network: host
       pull: yes
-      args:
-        ENV_FILE: '{{ env_directory }}'
       path: '/home/{{ ansible_user }}/{{ directory }}'
     name: '{{ directory }}:{{ git_clone_result.after[:7] }}'
     force_source: yes
@@ -40,31 +38,8 @@
     restart: yes
     state: started
     restart_policy: unless-stopped
-    etc_hosts:
-      'mongo1': '172.17.0.1'
-      'mongo2': '172.17.0.1'
-      'mongo3': '172.17.0.1'
     ports:
       - '{{ port }}:4001'
-# - name: Start the second container
-#   become: yes
-#   when: nb_processors == '2'
-#   community.general.docker_container:
-#     name: '{{ directory }}-2'
-#     image: '{{ directory }}:{{ git_clone_result.after[:7] }}'
-#     restart: yes
-#     state: started
-#     restart_policy: unless-stopped
-#     etc_hosts:
-#       'mongo1': '172.17.0.1'
-#       'mongo2': '172.17.0.1'
-#       'mongo3': '172.17.0.1'
-#     env:
-#       PROCESSOR_ID: '2'
-#       NB_TWEETS_TO_SCRAPE: '6000'
-#       MIN_PRIORITY: '2'
-#       API: 'false'
-#       USER_BOT_SCORES: 'false'
 
 - name: Prune containers and images
   become: yes
