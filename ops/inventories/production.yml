@@ -14,7 +14,7 @@ all:
               port: '7832'
               env_directory: '.env.preproduction'
               nb_processors: '1'
-        production:
+        ima-production:
           hosts:
             51.89.231.68:
               directory: 'ima-graph-generator-production'
