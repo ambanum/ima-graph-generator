@@ -67,8 +67,14 @@ export default class GraphSearchManager {
     return GraphSearchModel.find({}).lean();
   }
 
-  get(filter: FilterQuery<GraphSearch>) {
+  async get(filter: FilterQuery<GraphSearch>) {
     return GraphSearchModel.findOne(filter).lean();
+  }
+
+  async refresh(filter: FilterQuery<GraphSearch>) {
+    const { name, type, metadata, options } = await this.get(filter);
+    await GraphSearchModel.remove(filter);
+    return this.create({ name, type, metadata, options });
   }
 
   resetOutdated = async () => {
