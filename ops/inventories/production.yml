@@ -27,3 +27,7 @@ all:
           directory: 'ima-graph-generator-ambnum-production'
           port: '7036'
           env_directory: '.env.ambnum.production'
+        spis-production:
+          directory: 'ima-graph-generator-spis-production'
+          port: '7038'
+          env_directory: '.env.spis.production'
