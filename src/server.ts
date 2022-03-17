@@ -78,6 +78,21 @@ export default class Server {
         });
       }
     });
+
+    this.app.put('/graph-search/:search', async (req, res) => {
+      const { search: searchQuery } = req.params;
+      try {
+        const search = await this.graphManager.refresh({ name: searchQuery });
+
+        return res.json({ status: 'ok', search });
+      } catch (error) {
+        res.json({
+          status: 'ko',
+          message: `Graph not found for ${searchQuery}`,
+          error: error.toString(),
+        });
+      }
+    });
     this.app.get('/graph-searches', async (req, res) => {
       try {
         const searches = await this.graphManager.list();
