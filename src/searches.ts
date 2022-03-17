@@ -81,6 +81,10 @@ export default class SearchPoller {
             result: json,
             status: GraphSearchStatuses.PROCESSING,
           });
+
+          this.logger.info(
+            `Collected ${json?.metadata?.n_collected_tweets || 0} tweets for ${item?.name}`
+          );
           if (json.metadata.status === 'DONE') {
             await this.graphSearchmanager.stopProcessingSearch(item, { result: json });
             unlinkFile();
@@ -88,8 +92,9 @@ export default class SearchPoller {
           }
         } catch (e) {
           console.warn(e);
+          clearInterval(interval);
         }
-      }, 2000);
+      }, 10000);
     } catch (e) {
       this.logger.error(e.toString());
 
