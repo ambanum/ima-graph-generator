@@ -11,7 +11,7 @@ interface ServerProps {
 const SERVER_PORT = process.env.SERVER_PORT || 4000;
 
 const defaultOptions = {
-  maxresults: 10000,
+  maxresults: 5000,
   compute_botscore: true,
   batch_size: 200,
 };
