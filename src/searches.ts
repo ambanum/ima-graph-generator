@@ -83,7 +83,7 @@ export default class SearchPoller {
           });
 
           this.logger.info(
-            `Collected ${json?.metadata?.n_collected_tweets} tweets for ${item?.name}`
+            `Collected ${json?.metadata?.n_collected_tweets || 0} tweets for ${item?.name}`
           );
           if (json.metadata.status === 'DONE') {
             await this.graphSearchmanager.stopProcessingSearch(item, { result: json });
@@ -94,7 +94,7 @@ export default class SearchPoller {
           console.warn(e);
           clearInterval(interval);
         }
-      }, 2000);
+      }, 10000);
     } catch (e) {
       this.logger.error(e.toString());
 
